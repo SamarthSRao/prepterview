@@ -58,6 +58,18 @@ func (h *Handler) CreateCategory(c *gin.Context) {
 	c.JSON(http.StatusCreated, cat)
 }
 
+func (h *Handler) DeleteCategory(c *gin.Context) {
+	id := c.Param("id")
+	_, err := h.DB.Exec("DELETE FROM categories WHERE id=$1", id)
+	if err != nil {
+		fmt.Println("Error deleting category:", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "deleted successfully"})
+}
+
 // Questions
 func (h *Handler) GetQuestions(c *gin.Context) {
 	categoryID := c.Query("category_id")

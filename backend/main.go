@@ -32,6 +32,7 @@ func main() {
 	{
 		api.GET("/categories", h.GetCategories)
 		api.POST("/categories", h.CreateCategory)
+		api.DELETE("/categories/:id", h.DeleteCategory)
 
 		api.GET("/questions", h.GetQuestions)
 		api.POST("/questions", h.CreateQuestion)
