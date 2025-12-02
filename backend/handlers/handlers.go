@@ -79,12 +79,12 @@ func (h *Handler) GetQuestions(c *gin.Context) {
 
 	if categoryID != "" {
 		rows, err = h.DB.Query(
-			"SELECT id, category_id, question, answer, difficulty, created_at, updated_at FROM questions WHERE category_id = $1 ORDER BY created_at DESC",
+			"SELECT id, category_id, question, answer, COALESCE(context, ''), difficulty, created_at, updated_at FROM questions WHERE category_id = $1 ORDER BY created_at DESC",
 			categoryID,
 		)
 	} else {
 		rows, err = h.DB.Query(
-			"SELECT id, category_id, question, answer, difficulty, created_at, updated_at FROM questions ORDER BY created_at DESC",
+			"SELECT id, category_id, question, answer, COALESCE(context, ''), difficulty, created_at, updated_at FROM questions ORDER BY created_at DESC",
 		)
 	}
 
@@ -97,7 +97,7 @@ func (h *Handler) GetQuestions(c *gin.Context) {
 	var questions []models.Question
 	for rows.Next() {
 		var q models.Question
-		if err := rows.Scan(&q.ID, &q.CategoryID, &q.Question, &q.Answer, &q.Difficulty, &q.CreatedAt, &q.UpdatedAt); err != nil {
+		if err := rows.Scan(&q.ID, &q.CategoryID, &q.Question, &q.Answer, &q.Context, &q.Difficulty, &q.CreatedAt, &q.UpdatedAt); err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
@@ -115,8 +115,8 @@ func (h *Handler) CreateQuestion(c *gin.Context) {
 	}
 
 	err := h.DB.QueryRow(
-		"INSERT INTO questions (category_id, question, answer, difficulty) VALUES ($1, $2, $3, $4) RETURNING id, created_at, updated_at",
-		q.CategoryID, q.Question, q.Answer, q.Difficulty,
+		"INSERT INTO questions (category_id, question, answer,context, difficulty) VALUES ($1, $2, $3, $4,$5) RETURNING id, created_at, updated_at",
+		q.CategoryID, q.Question, q.Answer, q.Context, q.Difficulty,
 	).Scan(&q.ID, &q.CreatedAt, &q.UpdatedAt)
 
 	if err != nil {
@@ -136,8 +136,8 @@ func (h *Handler) UpdateQuestion(c *gin.Context) {
 	}
 
 	_, err := h.DB.Exec(
-		"UPDATE questions SET question=$1, answer=$2, difficulty=$3, updated_at=CURRENT_TIMESTAMP WHERE id=$4",
-		q.Question, q.Answer, q.Difficulty, id,
+		"UPDATE questions SET question=$1, answer=$2,context=$3, difficulty=$4, updated_at=CURRENT_TIMESTAMP WHERE id=$5",
+		q.Question, q.Answer, q.Context, q.Difficulty, id,
 	)
 
 	if err != nil {
