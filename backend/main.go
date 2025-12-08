@@ -5,6 +5,7 @@ import (
 	"interview-prep/handlers"
 	"interview-prep/routes"
 	"log"
+	"os"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -22,8 +23,13 @@ func main() {
 	r := gin.Default()
 
 	// Configure CORS
+	allowedOrigins := []string{"http://localhost:5173", "http://localhost:3000"}
+	if origin := os.Getenv("ALLOWED_ORIGIN"); origin != "" {
+		allowedOrigins = append(allowedOrigins, origin)
+	}
+
 	r.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"http://localhost:5173", "http://localhost:3000"},
+		AllowOrigins:     allowedOrigins,
 		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"},
 		AllowCredentials: true,
@@ -45,5 +51,9 @@ func main() {
 		api.DELETE("/questions/:id", h.DeleteQuestion)
 	}
 
-	r.Run(":8081")
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8081"
+	}
+	r.Run(":" + port)
 }
