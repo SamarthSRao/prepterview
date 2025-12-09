@@ -18,6 +18,11 @@ func main() {
 	}
 	defer db.Close()
 
+	// Run migrations to create tables
+	if err := database.RunMigrations(db); err != nil {
+		log.Printf("Warning: Migration failed: %v", err)
+	}
+
 	h := &handlers.Handler{DB: db}
 
 	r := gin.Default()
