@@ -33,6 +33,8 @@ func main() {
 		allowedOrigins = append(allowedOrigins, origin)
 	}
 
+	log.Printf("Allowed CORS origins: %v", allowedOrigins)
+
 	r.Use(cors.New(cors.Config{
 		AllowOrigins:     allowedOrigins,
 		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
