@@ -35,6 +35,7 @@ func RunMigrations(db *sql.DB) error {
 			created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 			updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 		)`,
+		`ALTER TABLE questions ADD COLUMN IF NOT EXISTS context TEXT`,
 	}
 
 	for i, migration := range migrations {
