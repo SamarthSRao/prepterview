@@ -7,6 +7,8 @@ import (
 	"log"
 	"os"
 
+	"strings"
+
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
@@ -40,6 +42,9 @@ func main() {
 		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"},
 		AllowCredentials: true,
+		AllowOriginFunc: func(origin string) bool {
+			return strings.HasSuffix(origin, ".vercel.app")
+		},
 	}))
 
 	// Setup Auth Routes
