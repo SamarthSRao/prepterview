@@ -6,7 +6,7 @@
 
 @layer base {
   body {
-    @apply font-sans text-slate-900 bg-slate-50;
+    @apply font-sans text-gray-200 bg-black selection:bg-green-500/30 selection:text-green-200;
     font-family: 'Inter', sans-serif;
   }
 }
