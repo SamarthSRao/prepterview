@@ -27,27 +27,41 @@ const Login = () => {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 py-12 px-4 sm:px-6 lg:px-8">
-            <div className="max-w-md w-full space-y-8 bg-white p-10 rounded-2xl shadow-xl">
+        <div className="min-h-screen flex items-center justify-center bg-slate-50 py-12 px-4 sm:px-6 lg:px-8">
+            <div className="max-w-md w-full space-y-8 bg-white p-10 rounded-2xl shadow-xl border border-slate-100">
                 <div>
-                    <h2 className="mt-6 text-center text-4xl font-extrabold text-gray-900">
+                    <div className="bg-indigo-600 w-12 h-12 rounded-xl flex items-center justify-center mx-auto mb-6 shadow-lg shadow-indigo-200">
+                        <svg className="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                        </svg>
+                    </div>
+                    <h2 className="text-center text-3xl font-bold text-slate-900 tracking-tight">
                         Welcome Back
                     </h2>
-                    <p className="mt-2 text-center text-sm text-gray-600">
+                    <p className="mt-2 text-center text-sm text-slate-500">
                         Sign in to your account to continue
                     </p>
                 </div>
 
                 <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
                     {error && (
-                        <div className="bg-red-50 border-l-4 border-red-500 p-4 rounded">
-                            <p className="text-sm text-red-700">{error}</p>
+                        <div className="bg-rose-50 border-l-4 border-rose-500 p-4 rounded-r-lg">
+                            <div className="flex">
+                                <div className="flex-shrink-0">
+                                    <svg className="h-5 w-5 text-rose-400" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                                    </svg>
+                                </div>
+                                <div className="ml-3">
+                                    <p className="text-sm text-rose-700">{error}</p>
+                                </div>
+                            </div>
                         </div>
                     )}
 
-                    <div className="space-y-4">
+                    <div className="space-y-5">
                         <div>
-                            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+                            <label htmlFor="email" className="block text-sm font-medium text-slate-700 mb-1.5">
                                 Email Address
                             </label>
                             <input
@@ -58,13 +72,13 @@ const Login = () => {
                                 required
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
-                                className="appearance-none relative block w-full px-4 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+                                className="appearance-none block w-full px-4 py-3 border border-slate-300 placeholder-slate-400 text-slate-900 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
                                 placeholder="you@example.com"
                             />
                         </div>
 
                         <div>
-                            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
+                            <label htmlFor="password" className="block text-sm font-medium text-slate-700 mb-1.5">
                                 Password
                             </label>
                             <input
@@ -75,7 +89,7 @@ const Login = () => {
                                 required
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
-                                className="appearance-none relative block w-full px-4 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+                                className="appearance-none block w-full px-4 py-3 border border-slate-300 placeholder-slate-400 text-slate-900 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
                                 placeholder="••••••••"
                             />
                         </div>
@@ -85,7 +99,7 @@ const Login = () => {
                         <button
                             type="submit"
                             disabled={loading}
-                            className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="group relative w-full flex justify-center py-3.5 px-4 border border-transparent text-sm font-semibold rounded-xl text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all duration-200 disabled:opacity-70 disabled:cursor-not-allowed shadow-lg shadow-indigo-200"
                         >
                             {loading ? (
                                 <span className="flex items-center">
@@ -102,9 +116,9 @@ const Login = () => {
                     </div>
 
                     <div className="text-center">
-                        <p className="text-sm text-gray-600">
+                        <p className="text-sm text-slate-600">
                             Don't have an account?{' '}
-                            <Link to="/signup" className="font-medium text-blue-600 hover:text-blue-500 transition">
+                            <Link to="/signup" className="font-semibold text-indigo-600 hover:text-indigo-500 transition">
                                 Sign up here
                             </Link>
                         </p>

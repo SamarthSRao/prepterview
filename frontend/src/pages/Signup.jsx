@@ -73,28 +73,42 @@ const Signup = () => {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-50 to-pink-100 py-12 px-4 sm:px-6 lg:px-8">
-            <div className="max-w-md w-full space-y-8 bg-white p-10 rounded-2xl shadow-xl">
+        <div className="min-h-screen flex items-center justify-center bg-slate-50 py-12 px-4 sm:px-6 lg:px-8">
+            <div className="max-w-md w-full space-y-8 bg-white p-10 rounded-2xl shadow-xl border border-slate-100">
                 <div>
-                    <h2 className="mt-6 text-center text-4xl font-extrabold text-gray-900">
+                    <div className="bg-indigo-600 w-12 h-12 rounded-xl flex items-center justify-center mx-auto mb-6 shadow-lg shadow-indigo-200">
+                        <svg className="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
+                        </svg>
+                    </div>
+                    <h2 className="text-center text-3xl font-bold text-slate-900 tracking-tight">
                         Create Account
                     </h2>
-                    <p className="mt-2 text-center text-sm text-gray-600">
+                    <p className="mt-2 text-center text-sm text-slate-500">
                         Join us and start preparing for interviews
                     </p>
                 </div>
 
                 <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
                     {error && (
-                        <div className="bg-red-50 border-l-4 border-red-500 p-4 rounded">
-                            <p className="text-sm text-red-700">{error}</p>
+                        <div className="bg-rose-50 border-l-4 border-rose-500 p-4 rounded-r-lg">
+                            <div className="flex">
+                                <div className="flex-shrink-0">
+                                    <svg className="h-5 w-5 text-rose-400" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                                    </svg>
+                                </div>
+                                <div className="ml-3">
+                                    <p className="text-sm text-rose-700">{error}</p>
+                                </div>
+                            </div>
                         </div>
                     )}
 
-                    <div className="space-y-4">
+                    <div className="space-y-5">
                         <div className="grid grid-cols-2 gap-4">
                             <div>
-                                <label htmlFor="firstName" className="block text-sm font-medium text-gray-700 mb-1">
+                                <label htmlFor="firstName" className="block text-sm font-medium text-slate-700 mb-1.5">
                                     First Name
                                 </label>
                                 <input
@@ -105,13 +119,13 @@ const Signup = () => {
                                     minLength="2"
                                     value={formData.firstName}
                                     onChange={handleChange}
-                                    className="appearance-none relative block w-full px-4 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition"
+                                    className="appearance-none block w-full px-4 py-3 border border-slate-300 placeholder-slate-400 text-slate-900 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
                                     placeholder="John"
                                 />
                             </div>
 
                             <div>
-                                <label htmlFor="lastName" className="block text-sm font-medium text-gray-700 mb-1">
+                                <label htmlFor="lastName" className="block text-sm font-medium text-slate-700 mb-1.5">
                                     Last Name
                                 </label>
                                 <input
@@ -122,14 +136,14 @@ const Signup = () => {
                                     minLength="2"
                                     value={formData.lastName}
                                     onChange={handleChange}
-                                    className="appearance-none relative block w-full px-4 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition"
+                                    className="appearance-none block w-full px-4 py-3 border border-slate-300 placeholder-slate-400 text-slate-900 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
                                     placeholder="Doe"
                                 />
                             </div>
                         </div>
 
                         <div>
-                            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+                            <label htmlFor="email" className="block text-sm font-medium text-slate-700 mb-1.5">
                                 Email Address
                             </label>
                             <input
@@ -140,13 +154,13 @@ const Signup = () => {
                                 required
                                 value={formData.email}
                                 onChange={handleChange}
-                                className="appearance-none relative block w-full px-4 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition"
+                                className="appearance-none block w-full px-4 py-3 border border-slate-300 placeholder-slate-400 text-slate-900 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
                                 placeholder="you@example.com"
                             />
                         </div>
 
                         <div>
-                            <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">
+                            <label htmlFor="phone" className="block text-sm font-medium text-slate-700 mb-1.5">
                                 Phone Number
                             </label>
                             <input
@@ -157,13 +171,13 @@ const Signup = () => {
                                 required
                                 value={formData.phone}
                                 onChange={handleChange}
-                                className="appearance-none relative block w-full px-4 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition"
+                                className="appearance-none block w-full px-4 py-3 border border-slate-300 placeholder-slate-400 text-slate-900 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
                                 placeholder="+1 (555) 123-4567"
                             />
                         </div>
 
                         <div>
-                            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
+                            <label htmlFor="password" className="block text-sm font-medium text-slate-700 mb-1.5">
                                 Password
                             </label>
                             <input
@@ -175,13 +189,13 @@ const Signup = () => {
                                 minLength="6"
                                 value={formData.password}
                                 onChange={handleChange}
-                                className="appearance-none relative block w-full px-4 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition"
+                                className="appearance-none block w-full px-4 py-3 border border-slate-300 placeholder-slate-400 text-slate-900 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
                                 placeholder="••••••••"
                             />
                         </div>
 
                         <div>
-                            <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-1">
+                            <label htmlFor="confirmPassword" className="block text-sm font-medium text-slate-700 mb-1.5">
                                 Confirm Password
                             </label>
                             <input
@@ -192,7 +206,7 @@ const Signup = () => {
                                 required
                                 value={formData.confirmPassword}
                                 onChange={handleChange}
-                                className="appearance-none relative block w-full px-4 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition"
+                                className="appearance-none block w-full px-4 py-3 border border-slate-300 placeholder-slate-400 text-slate-900 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
                                 placeholder="••••••••"
                             />
                         </div>
@@ -202,7 +216,7 @@ const Signup = () => {
                         <button
                             type="submit"
                             disabled={loading}
-                            className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="group relative w-full flex justify-center py-3.5 px-4 border border-transparent text-sm font-semibold rounded-xl text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all duration-200 disabled:opacity-70 disabled:cursor-not-allowed shadow-lg shadow-indigo-200"
                         >
                             {loading ? (
                                 <span className="flex items-center">
@@ -219,9 +233,9 @@ const Signup = () => {
                     </div>
 
                     <div className="text-center">
-                        <p className="text-sm text-gray-600">
+                        <p className="text-sm text-slate-600">
                             Already have an account?{' '}
-                            <Link to="/login" className="font-medium text-purple-600 hover:text-purple-500 transition">
+                            <Link to="/login" className="font-semibold text-indigo-600 hover:text-indigo-500 transition">
                                 Sign in here
                             </Link>
                         </p>
