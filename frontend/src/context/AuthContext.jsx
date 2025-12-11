@@ -2,7 +2,6 @@ import React, { createContext, useState, useContext, useEffect } from 'react';
 import axios from 'axios';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8081';
-console.log('API_URL:', API_URL, 'VITE_API_URL env:', import.meta.env.VITE_API_URL);
 
 const AuthContext = createContext(null);
 
