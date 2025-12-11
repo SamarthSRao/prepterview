@@ -23,11 +23,11 @@ func (h *Handler) GetCategories(c *gin.Context) {
 		SELECT 
 			c.id, 
 			c.name, 
-			COALESCE(c.user_id, 0)::integer, 
+			COALESCE(c.user_id, 0), 
 			COALESCE(u.first_name || ' ' || u.last_name, 'Unknown'), 
 			c.created_at,
-			(c.user_id = $1 OR EXISTS(SELECT 1 FROM category_permissions WHERE category_id=c.id AND user_id=$1 AND status='APPROVED')),
-			COALESCE((SELECT status FROM category_permissions WHERE category_id=c.id AND user_id=$1), '')
+			CASE WHEN c.user_id = $1 OR EXISTS(SELECT 1 FROM category_permissions WHERE category_id=c.id AND user_id=$1 AND status='APPROVED') THEN true ELSE false END as has_permission,
+			COALESCE((SELECT status FROM category_permissions WHERE category_id=c.id AND user_id=$1), '') as request_status
 		FROM categories c 
 		LEFT JOIN users u ON c.user_id = u.id 
 		ORDER BY c.name
