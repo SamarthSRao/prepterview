@@ -153,6 +153,8 @@ function InterviewPrep() {
 
     const currentCategory = categories.find(c => c.id.toString() === selectedCategory);
 
+
+
     return (
         <div className="flex flex-col md:flex-row gap-8">
             {/* Sidebar */}
@@ -216,33 +218,35 @@ function InterviewPrep() {
                         ))}
                     </div>
 
-                    {selectedCategory && currentCategory?.user_id === user?.user_id && (
-                        <div className="p-4 border-t border-neutral-800 bg-neutral-900/50 flex flex-col gap-2">
-                            <button
-                                onClick={fetchRequests}
-                                className="w-full flex items-center justify-center gap-2 text-blue-400 hover:text-blue-300 text-xs font-medium px-3 py-2 rounded-lg hover:bg-blue-500/10 transition-colors"
-                            >
-                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
-                                </svg>
-                                Manage Requests
-                            </button>
-                            <button
-                                onClick={handleDeleteCategory}
-                                className="w-full flex items-center justify-center gap-2 text-red-500 hover:text-red-400 text-xs font-medium px-3 py-2 rounded-lg hover:bg-red-500/10 transition-colors"
-                            >
-                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                </svg>
-                                Delete Category
-                            </button>
-                        </div>
-                    )}
-                </div>
-            </aside>
+                    {
+                        selectedCategory && String(currentCategory?.user_id) === String(user?.id || user?.user_id) && (
+                            <div className="p-4 border-t border-neutral-800 bg-neutral-900/50 flex flex-col gap-2">
+                                <button
+                                    onClick={fetchRequests}
+                                    className="w-full flex items-center justify-center gap-2 text-blue-400 hover:text-blue-300 text-xs font-medium px-3 py-2 rounded-lg hover:bg-blue-500/10 transition-colors"
+                                >
+                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                                    </svg>
+                                    Manage Requests
+                                </button>
+                                <button
+                                    onClick={handleDeleteCategory}
+                                    className="w-full flex items-center justify-center gap-2 text-red-500 hover:text-red-400 text-xs font-medium px-3 py-2 rounded-lg hover:bg-red-500/10 transition-colors"
+                                >
+                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                    </svg>
+                                    Delete Category
+                                </button>
+                            </div>
+                        )
+                    }
+                </div >
+            </aside >
 
             {/* Main Content */}
-            <div className="flex-1 min-w-0">
+            < div className="flex-1 min-w-0" >
                 <div className="flex justify-between items-center mb-6">
                     <h2 className="text-2xl font-bold text-white">
                         {selectedCategory
@@ -276,79 +280,81 @@ function InterviewPrep() {
                     ) : null}
                 </div>
 
-                {showQuestionForm && (
-                    <div className="bg-neutral-900 p-6 rounded-xl shadow-lg border border-neutral-800 mb-8 animate-fade-in ring-1 ring-green-500/20">
-                        <div className="flex justify-between items-center mb-6">
-                            <h3 className="text-lg font-semibold text-white">New Question</h3>
-                            <button onClick={() => setShowQuestionForm(false)} className="text-gray-500 hover:text-gray-300">
-                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-                                </svg>
-                            </button>
-                        </div>
-                        <form onSubmit={handleCreateQuestion} className="space-y-5">
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                {
+                    showQuestionForm && (
+                        <div className="bg-neutral-900 p-6 rounded-xl shadow-lg border border-neutral-800 mb-8 animate-fade-in ring-1 ring-green-500/20">
+                            <div className="flex justify-between items-center mb-6">
+                                <h3 className="text-lg font-semibold text-white">New Question</h3>
+                                <button onClick={() => setShowQuestionForm(false)} className="text-gray-500 hover:text-gray-300">
+                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                                    </svg>
+                                </button>
+                            </div>
+                            <form onSubmit={handleCreateQuestion} className="space-y-5">
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-400 mb-1.5">Category</label>
+                                        <select
+                                            value={questionForm.category_id}
+                                            onChange={(e) => setQuestionForm({ ...questionForm, category_id: e.target.value })}
+                                            className="w-full border border-neutral-700 bg-black rounded-lg px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent text-white"
+                                            required
+                                        >
+                                            <option value="">Select Category</option>
+                                            {categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-400 mb-1.5">Difficulty</label>
+                                        <select
+                                            value={questionForm.difficulty}
+                                            onChange={(e) => setQuestionForm({ ...questionForm, difficulty: e.target.value })}
+                                            className="w-full border border-neutral-700 bg-black rounded-lg px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent text-white"
+                                        >
+                                            <option>Easy</option>
+                                            <option>Medium</option>
+                                            <option>Hard</option>
+                                        </select>
+                                    </div>
+                                </div>
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-400 mb-1.5">Category</label>
-                                    <select
-                                        value={questionForm.category_id}
-                                        onChange={(e) => setQuestionForm({ ...questionForm, category_id: e.target.value })}
-                                        className="w-full border border-neutral-700 bg-black rounded-lg px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent text-white"
+                                    <label className="block text-sm font-medium text-gray-400 mb-1.5">Question</label>
+                                    <input
+                                        type="text"
+                                        placeholder="What is the difference between..."
+                                        value={questionForm.question}
+                                        onChange={(e) => setQuestionForm({ ...questionForm, question: e.target.value })}
+                                        className="w-full border border-neutral-700 bg-black rounded-lg px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent text-white placeholder-gray-600"
                                         required
-                                    >
-                                        <option value="">Select Category</option>
-                                        {categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
-                                    </select>
+                                    />
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-400 mb-1.5">Difficulty</label>
-                                    <select
-                                        value={questionForm.difficulty}
-                                        onChange={(e) => setQuestionForm({ ...questionForm, difficulty: e.target.value })}
-                                        className="w-full border border-neutral-700 bg-black rounded-lg px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent text-white"
-                                    >
-                                        <option>Easy</option>
-                                        <option>Medium</option>
-                                        <option>Hard</option>
-                                    </select>
+                                    <label className="block text-sm font-medium text-gray-400 mb-1.5">Answer</label>
+                                    <textarea
+                                        placeholder="The main difference is..."
+                                        value={questionForm.answer}
+                                        onChange={(e) => setQuestionForm({ ...questionForm, answer: e.target.value })}
+                                        className="w-full border border-neutral-700 bg-black rounded-lg px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent h-32 resize-y text-white placeholder-gray-600"
+                                    />
                                 </div>
-                            </div>
-                            <div>
-                                <label className="block text-sm font-medium text-gray-400 mb-1.5">Question</label>
-                                <input
-                                    type="text"
-                                    placeholder="What is the difference between..."
-                                    value={questionForm.question}
-                                    onChange={(e) => setQuestionForm({ ...questionForm, question: e.target.value })}
-                                    className="w-full border border-neutral-700 bg-black rounded-lg px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent text-white placeholder-gray-600"
-                                    required
-                                />
-                            </div>
-                            <div>
-                                <label className="block text-sm font-medium text-gray-400 mb-1.5">Answer</label>
-                                <textarea
-                                    placeholder="The main difference is..."
-                                    value={questionForm.answer}
-                                    onChange={(e) => setQuestionForm({ ...questionForm, answer: e.target.value })}
-                                    className="w-full border border-neutral-700 bg-black rounded-lg px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent h-32 resize-y text-white placeholder-gray-600"
-                                />
-                            </div>
-                            <div>
-                                <label className="block text-sm font-medium text-gray-400 mb-1.5">Context / Notes (Optional)</label>
-                                <textarea
-                                    placeholder="Asked in Google interview..."
-                                    value={questionForm.context}
-                                    onChange={(e) => setQuestionForm({ ...questionForm, context: e.target.value })}
-                                    className="w-full border border-neutral-700 bg-black rounded-lg px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent h-20 resize-y text-white placeholder-gray-600"
-                                />
-                            </div>
-                            <div className="flex justify-end gap-3 pt-2">
-                                <button type="button" onClick={() => setShowQuestionForm(false)} className="px-5 py-2.5 text-sm font-medium text-gray-300 bg-neutral-800 border border-neutral-700 rounded-lg hover:bg-neutral-700 transition-colors">Cancel</button>
-                                <button type="submit" className="px-5 py-2.5 text-sm font-bold text-black bg-green-600 rounded-lg hover:bg-green-500 transition-colors shadow-sm shadow-green-900/20">Save Question</button>
-                            </div>
-                        </form>
-                    </div>
-                )}
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-400 mb-1.5">Context / Notes (Optional)</label>
+                                    <textarea
+                                        placeholder="Asked in Google interview..."
+                                        value={questionForm.context}
+                                        onChange={(e) => setQuestionForm({ ...questionForm, context: e.target.value })}
+                                        className="w-full border border-neutral-700 bg-black rounded-lg px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent h-20 resize-y text-white placeholder-gray-600"
+                                    />
+                                </div>
+                                <div className="flex justify-end gap-3 pt-2">
+                                    <button type="button" onClick={() => setShowQuestionForm(false)} className="px-5 py-2.5 text-sm font-medium text-gray-300 bg-neutral-800 border border-neutral-700 rounded-lg hover:bg-neutral-700 transition-colors">Cancel</button>
+                                    <button type="submit" className="px-5 py-2.5 text-sm font-bold text-black bg-green-600 rounded-lg hover:bg-green-500 transition-colors shadow-sm shadow-green-900/20">Save Question</button>
+                                </div>
+                            </form>
+                        </div>
+                    )
+                }
 
                 <div className="space-y-4">
                     {questions.map(q => (
@@ -414,59 +420,61 @@ function InterviewPrep() {
                         </div>
                     )}
                 </div>
-            </div>
+            </div >
             {/* Requests Modal */}
-            {showRequestsModal && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
-                    <div className="bg-neutral-900 w-full max-w-md rounded-xl border border-neutral-800 shadow-2xl overflow-hidden">
-                        <div className="p-4 border-b border-neutral-800 flex justify-between items-center">
-                            <h3 className="text-lg font-bold text-white">Access Requests</h3>
-                            <button onClick={() => setShowRequestsModal(false)} className="text-gray-500 hover:text-white">
-                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-                                </svg>
-                            </button>
-                        </div>
-                        <div className="p-4 max-h-[60vh] overflow-y-auto">
-                            {requests.length === 0 ? (
-                                <p className="text-center text-gray-500 py-8">No pending requests.</p>
-                            ) : (
-                                <div className="space-y-3">
-                                    {requests.map(req => (
-                                        <div key={req.id} className="bg-black p-3 rounded-lg border border-neutral-800 flex justify-between items-center">
-                                            <div>
-                                                <p className="text-sm font-bold text-gray-200">{req.user.first_name} {req.user.last_name}</p>
-                                                <p className="text-xs text-gray-500">{req.user.email}</p>
+            {
+                showRequestsModal && (
+                    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
+                        <div className="bg-neutral-900 w-full max-w-md rounded-xl border border-neutral-800 shadow-2xl overflow-hidden">
+                            <div className="p-4 border-b border-neutral-800 flex justify-between items-center">
+                                <h3 className="text-lg font-bold text-white">Access Requests</h3>
+                                <button onClick={() => setShowRequestsModal(false)} className="text-gray-500 hover:text-white">
+                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                                    </svg>
+                                </button>
+                            </div>
+                            <div className="p-4 max-h-[60vh] overflow-y-auto">
+                                {requests.length === 0 ? (
+                                    <p className="text-center text-gray-500 py-8">No pending requests.</p>
+                                ) : (
+                                    <div className="space-y-3">
+                                        {requests.map(req => (
+                                            <div key={req.id} className="bg-black p-3 rounded-lg border border-neutral-800 flex justify-between items-center">
+                                                <div>
+                                                    <p className="text-sm font-bold text-gray-200">{req.user.first_name} {req.user.last_name}</p>
+                                                    <p className="text-xs text-gray-500">{req.user.email}</p>
+                                                </div>
+                                                <div className="flex gap-2">
+                                                    <button
+                                                        onClick={() => handleRespond(req.id, 'APPROVED')}
+                                                        className="p-1.5 bg-green-900/30 text-green-400 rounded hover:bg-green-900/50 transition"
+                                                        title="Approve"
+                                                    >
+                                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                                                        </svg>
+                                                    </button>
+                                                    <button
+                                                        onClick={() => handleRespond(req.id, 'REJECTED')}
+                                                        className="p-1.5 bg-red-900/30 text-red-400 rounded hover:bg-red-900/50 transition"
+                                                        title="Reject"
+                                                    >
+                                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                                                        </svg>
+                                                    </button>
+                                                </div>
                                             </div>
-                                            <div className="flex gap-2">
-                                                <button
-                                                    onClick={() => handleRespond(req.id, 'APPROVED')}
-                                                    className="p-1.5 bg-green-900/30 text-green-400 rounded hover:bg-green-900/50 transition"
-                                                    title="Approve"
-                                                >
-                                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
-                                                    </svg>
-                                                </button>
-                                                <button
-                                                    onClick={() => handleRespond(req.id, 'REJECTED')}
-                                                    className="p-1.5 bg-red-900/30 text-red-400 rounded hover:bg-red-900/50 transition"
-                                                    title="Reject"
-                                                >
-                                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-                                                    </svg>
-                                                </button>
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
-                            )}
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
                         </div>
                     </div>
-                </div>
-            )}
-        </div>
+                )
+            }
+        </div >
     );
 }
 
