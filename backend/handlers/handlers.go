@@ -23,11 +23,11 @@ func (h *Handler) GetCategories(c *gin.Context) {
 		SELECT 
 			c.id, 
 			c.name, 
-			COALESCE(c.user_id, 0), 
+			COALESCE(c.user_id, 0)::integer, 
 			COALESCE(u.first_name || ' ' || u.last_name, 'Unknown'), 
 			c.created_at,
-			(c.user_id = $1 OR EXISTS(SELECT 1 FROM category_permissions WHERE category_id=c.id AND user_id=$1 AND status='APPROVED')) as has_permission,
-			COALESCE((SELECT status FROM category_permissions WHERE category_id=c.id AND user_id=$1), '') as request_status
+			(c.user_id = $1 OR EXISTS(SELECT 1 FROM category_permissions WHERE category_id=c.id AND user_id=$1 AND status='APPROVED')),
+			COALESCE((SELECT status FROM category_permissions WHERE category_id=c.id AND user_id=$1), '')
 		FROM categories c 
 		LEFT JOIN users u ON c.user_id = u.id 
 		ORDER BY c.name
@@ -39,10 +39,11 @@ func (h *Handler) GetCategories(c *gin.Context) {
 	}
 	defer rows.Close()
 
-	var categories []models.Category
+	categories := []models.Category{}
 	for rows.Next() {
 		var cat models.Category
 		if err := rows.Scan(&cat.ID, &cat.Name, &cat.UserID, &cat.CreatorName, &cat.CreatedAt, &cat.HasPermission, &cat.RequestStatus); err != nil {
+			fmt.Println("Scan error:", err)
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
