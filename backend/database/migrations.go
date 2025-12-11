@@ -36,6 +36,15 @@ func RunMigrations(db *sql.DB) error {
 			updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 		)`,
 		`ALTER TABLE questions ADD COLUMN IF NOT EXISTS context TEXT`,
+		`ALTER TABLE categories ADD COLUMN IF NOT EXISTS user_id INTEGER REFERENCES users(id) ON DELETE CASCADE`,
+		`CREATE TABLE IF NOT EXISTS category_permissions (
+			id SERIAL PRIMARY KEY,
+			category_id INTEGER REFERENCES categories(id) ON DELETE CASCADE,
+			user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+			status VARCHAR(20) DEFAULT 'PENDING', -- PENDING, APPROVED, REJECTED
+			created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+			UNIQUE(category_id, user_id)
+		)`,
 	}
 
 	for i, migration := range migrations {

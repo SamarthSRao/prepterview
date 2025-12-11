@@ -1,14 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useAuth } from '../context/AuthContext';
 
 const API_URL = `${import.meta.env.VITE_API_URL || 'http://localhost:8081'}/api`;
 
 function InterviewPrep() {
+    const { user } = useAuth();
     const [categories, setCategories] = useState([]);
     const [questions, setQuestions] = useState([]);
     const [selectedCategory, setSelectedCategory] = useState('');
     const [showQuestionForm, setShowQuestionForm] = useState(false);
     const [showCategoryForm, setShowCategoryForm] = useState(false);
+    const [showRequestsModal, setShowRequestsModal] = useState(false);
+    const [requests, setRequests] = useState([]);
 
     // Form states
     const [newCategory, setNewCategory] = useState('');
@@ -115,6 +119,40 @@ function InterviewPrep() {
         }
     };
 
+    const handleRequestAccess = async () => {
+        try {
+            await axios.post(`${API_URL}/categories/${selectedCategory}/request-access`);
+            alert('Request sent! Waiting for approval.');
+            fetchCategories();
+        } catch (err) {
+            alert(err.response?.data?.error || 'Error sending request');
+        }
+    };
+
+    const fetchRequests = async () => {
+        try {
+            const res = await axios.get(`${API_URL}/categories/${selectedCategory}/requests`);
+            setRequests(res.data);
+            setShowRequestsModal(true);
+        } catch (err) {
+            console.error(err);
+            alert('Error fetching requests');
+        }
+    };
+
+    const handleRespond = async (reqId, status) => {
+        try {
+            await axios.post(`${API_URL}/categories/${selectedCategory}/requests/${reqId}/respond`, { status });
+            // Refresh requests list
+            const res = await axios.get(`${API_URL}/categories/${selectedCategory}/requests`);
+            setRequests(res.data);
+        } catch (err) {
+            alert('Error updating status');
+        }
+    };
+
+    const currentCategory = categories.find(c => c.id.toString() === selectedCategory);
+
     return (
         <div className="flex flex-col md:flex-row gap-8">
             {/* Sidebar */}
@@ -163,20 +201,32 @@ function InterviewPrep() {
                             <button
                                 key={c.id}
                                 onClick={() => setSelectedCategory(c.id.toString())}
-                                className={`w-full text-left px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 flex items-center justify-between group ${selectedCategory === c.id.toString() ? 'bg-green-500/10 text-green-500' : 'text-gray-400 hover:bg-neutral-800 hover:text-gray-200'}`}
+                                className={`w-full text-left px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 flex flex-col gap-1 group ${selectedCategory === c.id.toString() ? 'bg-green-500/10 text-green-500' : 'text-gray-400 hover:bg-neutral-800 hover:text-gray-200'}`}
                             >
-                                <span className="truncate">{c.name}</span>
-                                {selectedCategory === c.id.toString() && (
-                                    <div className="flex items-center gap-2">
+                                <div className="flex items-center justify-between w-full">
+                                    <span className="truncate">{c.name}</span>
+                                    {selectedCategory === c.id.toString() && (
                                         <div className="w-1.5 h-1.5 rounded-full bg-green-500"></div>
-                                    </div>
-                                )}
+                                    )}
+                                </div>
+                                <span className="text-[10px] text-gray-600 group-hover:text-gray-500">
+                                    by {c.creator_name}
+                                </span>
                             </button>
                         ))}
                     </div>
 
-                    {selectedCategory && (
-                        <div className="p-4 border-t border-neutral-800 bg-neutral-900/50">
+                    {selectedCategory && currentCategory?.user_id === user?.user_id && (
+                        <div className="p-4 border-t border-neutral-800 bg-neutral-900/50 flex flex-col gap-2">
+                            <button
+                                onClick={fetchRequests}
+                                className="w-full flex items-center justify-center gap-2 text-blue-400 hover:text-blue-300 text-xs font-medium px-3 py-2 rounded-lg hover:bg-blue-500/10 transition-colors"
+                            >
+                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                                </svg>
+                                Manage Requests
+                            </button>
                             <button
                                 onClick={handleDeleteCategory}
                                 className="w-full flex items-center justify-center gap-2 text-red-500 hover:text-red-400 text-xs font-medium px-3 py-2 rounded-lg hover:bg-red-500/10 transition-colors"
@@ -202,15 +252,28 @@ function InterviewPrep() {
                             {questions.length}
                         </span>
                     </h2>
-                    <button
-                        onClick={() => setShowQuestionForm(!showQuestionForm)}
-                        className="bg-green-600 text-black px-4 py-2 rounded-lg hover:bg-green-500 transition-all duration-200 shadow-sm hover:shadow-green-500/20 flex items-center gap-2 font-bold text-sm"
-                    >
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
-                        </svg>
-                        Add Question
-                    </button>
+                    {currentCategory?.has_permission ? (
+                        <button
+                            onClick={() => setShowQuestionForm(!showQuestionForm)}
+                            className="bg-green-600 text-black px-4 py-2 rounded-lg hover:bg-green-500 transition-all duration-200 shadow-sm hover:shadow-green-500/20 flex items-center gap-2 font-bold text-sm"
+                        >
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
+                            </svg>
+                            Add Question
+                        </button>
+                    ) : currentCategory?.request_status === 'PENDING' ? (
+                        <span className="text-yellow-500 text-sm font-medium bg-yellow-900/20 px-3 py-1.5 rounded-lg border border-yellow-900/50">
+                            Request Pending
+                        </span>
+                    ) : selectedCategory ? (
+                        <button
+                            onClick={handleRequestAccess}
+                            className="bg-neutral-800 text-gray-300 px-4 py-2 rounded-lg hover:bg-neutral-700 transition-all duration-200 border border-neutral-700 flex items-center gap-2 font-bold text-sm"
+                        >
+                            Request Access
+                        </button>
+                    ) : null}
                 </div>
 
                 {showQuestionForm && (
@@ -352,6 +415,57 @@ function InterviewPrep() {
                     )}
                 </div>
             </div>
+            {/* Requests Modal */}
+            {showRequestsModal && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
+                    <div className="bg-neutral-900 w-full max-w-md rounded-xl border border-neutral-800 shadow-2xl overflow-hidden">
+                        <div className="p-4 border-b border-neutral-800 flex justify-between items-center">
+                            <h3 className="text-lg font-bold text-white">Access Requests</h3>
+                            <button onClick={() => setShowRequestsModal(false)} className="text-gray-500 hover:text-white">
+                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                            </button>
+                        </div>
+                        <div className="p-4 max-h-[60vh] overflow-y-auto">
+                            {requests.length === 0 ? (
+                                <p className="text-center text-gray-500 py-8">No pending requests.</p>
+                            ) : (
+                                <div className="space-y-3">
+                                    {requests.map(req => (
+                                        <div key={req.id} className="bg-black p-3 rounded-lg border border-neutral-800 flex justify-between items-center">
+                                            <div>
+                                                <p className="text-sm font-bold text-gray-200">{req.user.first_name} {req.user.last_name}</p>
+                                                <p className="text-xs text-gray-500">{req.user.email}</p>
+                                            </div>
+                                            <div className="flex gap-2">
+                                                <button
+                                                    onClick={() => handleRespond(req.id, 'APPROVED')}
+                                                    className="p-1.5 bg-green-900/30 text-green-400 rounded hover:bg-green-900/50 transition"
+                                                    title="Approve"
+                                                >
+                                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                                                    </svg>
+                                                </button>
+                                                <button
+                                                    onClick={() => handleRespond(req.id, 'REJECTED')}
+                                                    className="p-1.5 bg-red-900/30 text-red-400 rounded hover:bg-red-900/50 transition"
+                                                    title="Reject"
+                                                >
+                                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                                                    </svg>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

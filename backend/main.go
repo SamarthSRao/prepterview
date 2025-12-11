@@ -3,6 +3,7 @@ package main
 import (
 	"interview-prep/database"
 	"interview-prep/handlers"
+	"interview-prep/middleware"
 	"interview-prep/routes"
 	"log"
 	"os"
@@ -52,10 +53,14 @@ func main() {
 
 	// Setup API Routes
 	api := r.Group("/api")
+	api.Use(middleware.AuthMiddleware())
 	{
 		api.GET("/categories", h.GetCategories)
 		api.POST("/categories", h.CreateCategory)
 		api.DELETE("/categories/:id", h.DeleteCategory)
+		api.POST("/categories/:id/request-access", h.RequestAccess)
+		api.GET("/categories/:id/requests", h.GetRequests)
+		api.POST("/categories/:id/requests/:requestId/respond", h.RespondToRequest)
 
 		api.GET("/questions", h.GetQuestions)
 		api.POST("/questions", h.CreateQuestion)
