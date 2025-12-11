@@ -6,6 +6,7 @@ import (
 	"interview-prep/models"
 	"net/http"
 	"strconv"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 )
@@ -72,6 +73,10 @@ func (h *Handler) CreateCategory(c *gin.Context) {
 
 	if err != nil {
 		fmt.Println("Error inserting category:", err)
+		if strings.Contains(err.Error(), "unique constraint") {
+			c.JSON(http.StatusConflict, gin.H{"error": "Category name already exists"})
+			return
+		}
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
