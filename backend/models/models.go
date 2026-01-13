@@ -22,3 +22,13 @@ type Question struct {
 	CreatedAt  time.Time `json:"created_at"`
 	UpdatedAt  time.Time `json:"updated_at"`
 }
+type Contribution struct {
+	Date  string `json:"date"`
+	Count int    `json:"count"`
+}
+
+type UserProfile struct {
+	User           User           `json:"user"`
+	Contributions  []Contribution `json:"contributions"`
+	TotalQuestions int            `json:"total_questions"`
+}

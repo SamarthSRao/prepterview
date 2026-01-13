@@ -5,6 +5,9 @@ import PrivateRoute from './components/PrivateRoute';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
 import Dashboard from './pages/Dashboard';
+import Explore from './pages/Explore';
+import Profile from './pages/Profile';
+import Layout from './components/Layout';
 
 function App() {
     return (
@@ -17,7 +20,29 @@ function App() {
                         path="/"
                         element={
                             <PrivateRoute>
-                                <Dashboard />
+                                <Layout>
+                                    <Dashboard />
+                                </Layout>
+                            </PrivateRoute>
+                        }
+                    />
+                    <Route
+                        path="/explore"
+                        element={
+                            <PrivateRoute>
+                                <Layout>
+                                    <Explore />
+                                </Layout>
+                            </PrivateRoute>
+                        }
+                    />
+                    <Route
+                        path="/profile/:id"
+                        element={
+                            <PrivateRoute>
+                                <Layout>
+                                    <Profile />
+                                </Layout>
                             </PrivateRoute>
                         }
                     />

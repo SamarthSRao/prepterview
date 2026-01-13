@@ -1,6 +1,7 @@
 package main
 
 import (
+	"interview-prep/controllers"
 	"interview-prep/database"
 	"interview-prep/handlers"
 	"interview-prep/middleware"
@@ -27,6 +28,7 @@ func main() {
 	}
 
 	h := &handlers.Handler{DB: db}
+	uc := &controllers.UserController{DB: db}
 
 	r := gin.Default()
 
@@ -66,6 +68,15 @@ func main() {
 		api.POST("/questions", h.CreateQuestion)
 		api.PUT("/questions/:id", h.UpdateQuestion)
 		api.DELETE("/questions/:id", h.DeleteQuestion)
+	}
+
+	// New User Profile and Search Routes
+	userRoutes := r.Group("/api/users")
+	userRoutes.Use(middleware.AuthMiddleware())
+	{
+		userRoutes.GET("/search", uc.SearchUsers)
+		userRoutes.GET("/:id/profile", uc.GetUserProfile)
+		userRoutes.GET("/:id/questions", uc.GetPublicUserQuestions)
 	}
 
 	port := os.Getenv("PORT")

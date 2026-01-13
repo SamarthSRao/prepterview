@@ -192,3 +192,118 @@ func (uc *UserController) GetUser(c *gin.Context) {
 
 	c.JSON(http.StatusOK, u)
 }
+
+func (uc *UserController) SearchUsers(c *gin.Context) {
+	query := c.Query("q")
+	if query == "" {
+		c.JSON(http.StatusOK, []models.User{})
+		return
+	}
+
+	searchTerm := "%" + query + "%"
+	rows, err := uc.DB.Query(
+		"SELECT id, first_name, last_name, email, role, created_at FROM users WHERE first_name ILIKE $1 OR last_name ILIKE $1 OR email ILIKE $1 LIMIT 20",
+		searchTerm,
+	)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	defer rows.Close()
+
+	var users []models.User
+	for rows.Next() {
+		var u models.User
+		if err := rows.Scan(&u.ID, &u.FirstName, &u.LastName, &u.Email, &u.Role, &u.CreatedAt); err != nil {
+			continue
+		}
+		users = append(users, u)
+	}
+
+	c.JSON(http.StatusOK, users)
+}
+
+func (uc *UserController) GetUserProfile(c *gin.Context) {
+	idStr := c.Param("id")
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid ID"})
+		return
+	}
+
+	var profile models.UserProfile
+
+	// Get User info
+	err = uc.DB.QueryRow("SELECT id, first_name, last_name, email, role, created_at FROM users WHERE id = $1", id).Scan(
+		&profile.User.ID, &profile.User.FirstName, &profile.User.LastName, &profile.User.Email, &profile.User.Role, &profile.User.CreatedAt,
+	)
+
+	if err == sql.ErrNoRows {
+		c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
+		return
+	} else if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	// Get Contributions (Questions created by user's categories)
+	rows, err := uc.DB.Query(`
+		SELECT TO_CHAR(q.created_at, 'YYYY-MM-DD') as date, COUNT(*) as count 
+		FROM questions q 
+		JOIN categories c ON q.category_id = c.id 
+		WHERE c.user_id = $1 
+		GROUP BY date 
+		ORDER BY date ASC`, id)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	defer rows.Close()
+
+	profile.Contributions = []models.Contribution{}
+	totalQuestions := 0
+	for rows.Next() {
+		var con models.Contribution
+		if err := rows.Scan(&con.Date, &con.Count); err != nil {
+			continue
+		}
+		profile.Contributions = append(profile.Contributions, con)
+		totalQuestions += con.Count
+	}
+	profile.TotalQuestions = totalQuestions
+
+	c.JSON(http.StatusOK, profile)
+}
+
+func (uc *UserController) GetPublicUserQuestions(c *gin.Context) {
+	idStr := c.Param("id")
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid ID"})
+		return
+	}
+
+	// Fetch all questions from categories owned by this user
+	rows, err := uc.DB.Query(`
+		SELECT q.id, q.category_id, q.question, q.answer, COALESCE(q.context, ''), q.difficulty, q.created_at, q.updated_at 
+		FROM questions q 
+		JOIN categories c ON q.category_id = c.id 
+		WHERE c.user_id = $1 
+		ORDER BY q.created_at DESC`, id)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	defer rows.Close()
+
+	var questions []models.Question
+	for rows.Next() {
+		var q models.Question
+		if err := rows.Scan(&q.ID, &q.CategoryID, &q.Question, &q.Answer, &q.Context, &q.Difficulty, &q.CreatedAt, &q.UpdatedAt); err != nil {
+			continue
+		}
+		questions = append(questions, q)
+	}
+
+	c.JSON(http.StatusOK, questions)
+}
