@@ -35,10 +35,12 @@ const Navbar = () => {
                     {/* User Actions */}
                     <div className="flex items-center gap-6">
                         <Link
-                            to={`/profile/${user?.id}`}
+                            to={user?.id ? `/profile/${user.id}` : '#'}
                             className="hidden md:block text-right group"
                         >
-                            <p className="text-sm font-semibold text-gray-200 group-hover:text-green-500 transition-colors">{user?.first_name} {user?.last_name}</p>
+                            <p className="text-sm font-semibold text-gray-200 group-hover:text-green-500 transition-colors">
+                                {user?.first_name || 'User'} {user?.last_name || ''}
+                            </p>
                             <p className="text-xs text-gray-500">{user?.email}</p>
                         </Link>
                         <div className="h-8 w-px bg-neutral-800 hidden md:block"></div>

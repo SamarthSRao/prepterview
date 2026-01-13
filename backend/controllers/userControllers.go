@@ -202,7 +202,13 @@ func (uc *UserController) SearchUsers(c *gin.Context) {
 
 	searchTerm := "%" + query + "%"
 	rows, err := uc.DB.Query(
-		"SELECT id, first_name, last_name, email, role, created_at FROM users WHERE first_name ILIKE $1 OR last_name ILIKE $1 OR email ILIKE $1 LIMIT 20",
+		`SELECT id, first_name, last_name, email, role, created_at 
+		 FROM users 
+		 WHERE first_name ILIKE $1 
+		    OR last_name ILIKE $1 
+		    OR email ILIKE $1 
+		    OR first_name || ' ' || last_name ILIKE $1 
+		 LIMIT 20`,
 		searchTerm,
 	)
 	if err != nil {

@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
+
+const API_URL = `${import.meta.env.VITE_API_URL || 'http://localhost:8081'}/api`;
 
 const Explore = () => {
     const [searchQuery, setSearchQuery] = useState('');
@@ -10,23 +13,24 @@ const Explore = () => {
     const navigate = useNavigate();
 
     const fetchUsers = async (query) => {
-        if (!query) {
+        if (!query.trim()) {
             setUsers([]);
             return;
         }
         setLoading(true);
         try {
-            const response = await fetch(`http://localhost:8081/api/users/search?q=${query}`, {
+            const response = await axios.get(`${API_URL}/users/search`, {
+                params: { q: query },
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
             });
-            const data = await response.json();
-            if (response.ok) {
-                setUsers(data);
+            if (Array.isArray(response.data)) {
+                setUsers(response.data);
             }
         } catch (error) {
             console.error('Error searching users:', error);
+            setUsers([]);
         } finally {
             setLoading(false);
         }
@@ -35,7 +39,7 @@ const Explore = () => {
     useEffect(() => {
         const timer = setTimeout(() => {
             fetchUsers(searchQuery);
-        }, 300);
+        }, 400);
         return () => clearTimeout(timer);
     }, [searchQuery]);
 
@@ -72,12 +76,12 @@ const Explore = () => {
                         >
                             <div className="flex items-center gap-4">
                                 <div className="h-12 w-12 rounded-full bg-gradient-to-br from-green-500 to-emerald-700 flex items-center justify-center text-black font-bold text-lg">
-                                    {user.first_name[0]}
-                                    {user.last_name[0]}
+                                    {user.first_name?.[0] || '?'}
+                                    {user.last_name?.[0] || ''}
                                 </div>
                                 <div>
                                     <h3 className="text-white font-semibold group-hover:text-green-400 transition-colors">
-                                        {user.first_name} {user.last_name}
+                                        {user.first_name || 'Unknown'} {user.last_name || ''}
                                     </h3>
                                     <p className="text-gray-500 text-sm">{user.email}</p>
                                 </div>

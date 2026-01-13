@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
 
+const API_URL = `${import.meta.env.VITE_API_URL || 'http://localhost:8081'}/api`;
+
 const ContributionGrid = ({ contributions }) => {
-    // Generate last 365 days
     const days = [];
     const today = new Date();
     for (let i = 364; i >= 0; i--) {
@@ -61,32 +63,33 @@ const Profile = () => {
     const [filteredQuestions, setFilteredQuestions] = useState([]);
     const [questionSearch, setQuestionSearch] = useState('');
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
     const { token, user: currentUser } = useAuth();
     const navigate = useNavigate();
 
     useEffect(() => {
         const fetchProfileData = async () => {
+            if (!id) return;
             setLoading(true);
+            setError(null);
             try {
-                // Fetch profile and contributions
-                const profileRes = await fetch(`http://localhost:8081/api/users/${id}/profile`, {
+                const config = {
                     headers: { 'Authorization': `Bearer ${token}` }
-                });
-                const profileData = await profileRes.json();
+                };
+
+                // Fetch profile and contributions
+                const profileRes = await axios.get(`${API_URL}/users/${id}/profile`, config);
+                setProfile(profileRes.data);
 
                 // Fetch questions
-                const questionsRes = await fetch(`http://localhost:8081/api/users/${id}/questions`, {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-                const questionsData = await questionsRes.json();
-
-                if (profileRes.ok) setProfile(profileData);
-                if (questionsRes.ok) {
-                    setQuestions(questionsData);
-                    setFilteredQuestions(questionsData);
+                const questionsRes = await axios.get(`${API_URL}/users/${id}/questions`, config);
+                if (Array.isArray(questionsRes.data)) {
+                    setQuestions(questionsRes.data);
+                    setFilteredQuestions(questionsRes.data);
                 }
-            } catch (error) {
-                console.error('Error fetching profile:', error);
+            } catch (err) {
+                console.error('Error fetching profile:', err);
+                setError(err.response?.data?.error || 'Failed to load profile');
             } finally {
                 setLoading(false);
             }
@@ -111,23 +114,35 @@ const Profile = () => {
         );
     }
 
-    if (!profile) {
-        return <div className="text-white text-center py-20">User not found</div>;
+    if (error || !profile) {
+        return (
+            <div className="text-white text-center py-20 flex flex-col items-center gap-4">
+                <p className="text-gray-400 text-lg">{error || 'User not found'}</p>
+                <button
+                    onClick={() => navigate('/explore')}
+                    className="text-green-500 hover:underline"
+                >
+                    Back to Explore
+                </button>
+            </div>
+        );
     }
+
+    const { user } = profile;
 
     return (
         <div className="max-w-6xl mx-auto px-4 py-8">
             {/* Header / Info Section */}
             <div className="flex flex-col md:flex-row gap-8 mb-12 items-start">
                 <div className="h-32 w-32 rounded-3xl bg-gradient-to-br from-green-500 to-emerald-700 flex items-center justify-center text-black font-bold text-4xl shadow-lg shadow-green-500/20">
-                    {profile.user.first_name[0]}
-                    {profile.user.last_name[0]}
+                    {user?.first_name?.[0] || '?'}
+                    {user?.last_name?.[0] || ''}
                 </div>
                 <div className="flex-1">
                     <h1 className="text-4xl font-bold text-white mb-2">
-                        {profile.user.first_name} {profile.user.last_name}
+                        {user?.first_name} {user?.last_name}
                     </h1>
-                    <p className="text-gray-400 text-lg mb-4">{profile.user.email}</p>
+                    <p className="text-gray-400 text-lg mb-4">{user?.email}</p>
                     <div className="flex gap-4">
                         <div className="bg-neutral-900 border border-neutral-800 px-4 py-2 rounded-lg">
                             <span className="text-gray-500 text-sm">Total Contributions</span>
@@ -136,22 +151,17 @@ const Profile = () => {
                         <div className="bg-neutral-900 border border-neutral-800 px-4 py-2 rounded-lg">
                             <span className="text-gray-500 text-sm">Member Since</span>
                             <p className="text-white font-bold text-lg">
-                                {new Date(profile.user.created_at).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
+                                {user?.created_at ? new Date(user.created_at).toLocaleDateString('en-US', { month: 'long', year: 'numeric' }) : 'N/A'}
                             </p>
                         </div>
                     </div>
                 </div>
-                {currentUser?.id === parseInt(id) && (
-                    <button className="bg-neutral-800 hover:bg-neutral-700 text-white px-6 py-2 rounded-xl border border-neutral-700 transition-colors">
-                        Edit Profile
-                    </button>
-                )}
             </div>
 
             {/* Contribution Chart */}
             <div className="mb-12">
                 <h2 className="text-xl font-semibold text-white mb-4">Contribution Status</h2>
-                <ContributionGrid contributions={profile.contributions} />
+                <ContributionGrid contributions={profile.contributions || []} />
             </div>
 
             {/* Questions List */}
@@ -179,8 +189,8 @@ const Profile = () => {
                                 <div className="flex justify-between items-start mb-4">
                                     <h3 className="text-white font-medium text-lg leading-relaxed flex-1 pr-4">{q.question}</h3>
                                     <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider ${q.difficulty === 'Easy' ? 'bg-green-500/10 text-green-500' :
-                                        q.difficulty === 'Medium' ? 'bg-yellow-500/10 text-yellow-500' :
-                                            'bg-red-500/10 text-red-500'
+                                            q.difficulty === 'Medium' ? 'bg-yellow-500/10 text-yellow-500' :
+                                                'bg-red-500/10 text-red-500'
                                         }`}>
                                         {q.difficulty}
                                     </span>
@@ -194,7 +204,7 @@ const Profile = () => {
                         ))
                     ) : (
                         <div className="bg-neutral-900/50 border border-neutral-800 border-dashed p-12 rounded-2xl text-center">
-                            <p className="text-gray-500">No questions shared yet.</p>
+                            <p className="text-gray-500">No questions found matching your search.</p>
                         </div>
                     )}
                 </div>
