@@ -27,15 +27,6 @@ type Contribution struct {
 	Count int    `json:"count"`
 }
 
-type Keyword struct {
-	ID          int       `json:"id"`
-	UserID      int       `json:"user_id"`
-	Keyword     string    `json:"keyword"`
-	Definition  string    `json:"definition"`
-	CreatedAt   time.Time `json:"created_at"`
-	UpdatedAt   time.Time `json:"updated_at"`
-}
-
 type UserProfile struct {
 	User           User           `json:"user"`
 	Contributions  []Contribution `json:"contributions"`
