@@ -381,6 +381,7 @@ func (h *Handler) CreateKeyword(c *gin.Context) {
 	).Scan(&k.ID, &k.CreatedAt)
 
 	if err != nil {
+		fmt.Printf("Error creating keyword: %v\n", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}

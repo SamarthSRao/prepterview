@@ -8,6 +8,7 @@ import (
 
 // RunMigrations creates all necessary tables if they don't exist
 func RunMigrations(db *sql.DB) error {
+	log.Println("Starting migrations...")
 	migrations := []string{
 		`CREATE TABLE IF NOT EXISTS categories (
 			id SERIAL PRIMARY KEY,
@@ -52,6 +53,9 @@ func RunMigrations(db *sql.DB) error {
 			definition TEXT,
 			created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 		)`,
+		`ALTER TABLE keywords ADD COLUMN IF NOT EXISTS word VARCHAR(100)`,
+		`ALTER TABLE keywords ADD COLUMN IF NOT EXISTS definition TEXT`,
+		`ALTER TABLE keywords DROP COLUMN IF EXISTS keyword`,
 	}
 
 	for i, migration := range migrations {

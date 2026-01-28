@@ -115,7 +115,8 @@ function InterviewPrep() {
             setShowKeywordForm(false);
             fetchKeywords();
         } catch (err) {
-            alert('Error creating keyword');
+            console.error(err);
+            alert(err.response?.data?.error || 'Error creating keyword');
         }
     };
 

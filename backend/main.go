@@ -33,7 +33,12 @@ func main() {
 	r := gin.Default()
 
 	// Configure CORS
-	allowedOrigins := []string{"http://localhost:5173", "http://localhost:3000"}
+	allowedOrigins := []string{
+		"http://localhost:5173",
+		"http://localhost:3000",
+		"http://127.0.0.1:5173",
+		"http://localhost:5174",
+	}
 	if origin := os.Getenv("ALLOWED_ORIGIN"); origin != "" {
 		allowedOrigins = append(allowedOrigins, origin)
 	}
