@@ -68,6 +68,10 @@ func main() {
 		api.POST("/questions", h.CreateQuestion)
 		api.PUT("/questions/:id", h.UpdateQuestion)
 		api.DELETE("/questions/:id", h.DeleteQuestion)
+
+		api.GET("/keywords", h.GetKeywords)
+		api.POST("/keywords", h.CreateKeyword)
+		api.DELETE("/keywords/:id", h.DeleteKeyword)
 	}
 
 	// New User Profile and Search Routes

@@ -22,6 +22,14 @@ type Question struct {
 	CreatedAt  time.Time `json:"created_at"`
 	UpdatedAt  time.Time `json:"updated_at"`
 }
+
+type Keyword struct {
+	ID         int       `json:"id"`
+	UserID     int       `json:"user_id"`
+	Word       string    `json:"word"`
+	Definition string    `json:"definition"`
+	CreatedAt  time.Time `json:"created_at"`
+}
 type Contribution struct {
 	Date  string `json:"date"`
 	Count int    `json:"count"`

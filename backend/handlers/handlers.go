@@ -341,3 +341,68 @@ func (h *Handler) RespondToRequest(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{"message": "Status updated"})
 }
+
+// Keywords
+func (h *Handler) GetKeywords(c *gin.Context) {
+	userID, _ := c.Get("user_id")
+
+	rows, err := h.DB.Query("SELECT id, word, definition, created_at FROM keywords WHERE user_id = $1 ORDER BY word", userID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	defer rows.Close()
+
+	var keywords []models.Keyword
+	for rows.Next() {
+		var k models.Keyword
+		if err := rows.Scan(&k.ID, &k.Word, &k.Definition, &k.CreatedAt); err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+		keywords = append(keywords, k)
+	}
+
+	c.JSON(http.StatusOK, keywords)
+}
+
+func (h *Handler) CreateKeyword(c *gin.Context) {
+	var k models.Keyword
+	if err := c.BindJSON(&k); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	userID, _ := c.Get("user_id")
+
+	err := h.DB.QueryRow(
+		"INSERT INTO keywords (user_id, word, definition) VALUES ($1, $2, $3) RETURNING id, created_at",
+		userID, k.Word, k.Definition,
+	).Scan(&k.ID, &k.CreatedAt)
+
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusCreated, k)
+}
+
+func (h *Handler) DeleteKeyword(c *gin.Context) {
+	id := c.Param("id")
+	userID, _ := c.Get("user_id")
+
+	result, err := h.DB.Exec("DELETE FROM keywords WHERE id=$1 AND user_id=$2", id, userID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	rowsAffected, _ := result.RowsAffected()
+	if rowsAffected == 0 {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Keyword not found"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "deleted successfully"})
+}
