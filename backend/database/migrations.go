@@ -49,13 +49,11 @@ func RunMigrations(db *sql.DB) error {
 		`CREATE TABLE IF NOT EXISTS keywords (
 			id SERIAL PRIMARY KEY,
 			user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
-			word VARCHAR(100) NOT NULL,
-			definition TEXT,
 			created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 		)`,
+		`ALTER TABLE keywords DROP COLUMN IF EXISTS keyword`,
 		`ALTER TABLE keywords ADD COLUMN IF NOT EXISTS word VARCHAR(100)`,
 		`ALTER TABLE keywords ADD COLUMN IF NOT EXISTS definition TEXT`,
-		`ALTER TABLE keywords DROP COLUMN IF EXISTS keyword`,
 	}
 
 	for i, migration := range migrations {
