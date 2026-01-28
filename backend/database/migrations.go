@@ -45,6 +45,15 @@ func RunMigrations(db *sql.DB) error {
 			created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 			UNIQUE(category_id, user_id)
 		)`,
+		`CREATE TABLE IF NOT EXISTS keywords (
+			id SERIAL PRIMARY KEY,
+			user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+			keyword VARCHAR(255) NOT NULL,
+			definition TEXT NOT NULL,
+			created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+			updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+		)`,
+		`CREATE UNIQUE INDEX IF NOT EXISTS idx_keywords_user_keyword ON keywords(user_id, keyword)`,
 	}
 
 	for i, migration := range migrations {
